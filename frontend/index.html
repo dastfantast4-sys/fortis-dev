@@ -1845,5 +1845,103 @@
             console.log('🚀 FORTIS — финальная версия с формой отправки заявок');
         })();
     </script>
+    <!-- ============ ДЕМО-ВИДЖЕТ С ОТОБРАЖЕНИЕМ ДАННЫХ ============ -->
+<div style="position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.85); color: #eee; padding: 18px 22px; border-radius: 16px; font-family: monospace; font-size: 13px; z-index: 9999; max-width: 360px; box-shadow: 0 8px 40px rgba(0,0,0,0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08);">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span style="font-weight: bold; color: #0ff;">⚡ API Tester</span>
+        <span id="api-status" style="color: #888; font-size: 11px;">● idle</span>
+    </div>
+
+    <!-- Поля для ввода тестовых данных -->
+    <div style="margin-bottom: 10px;">
+        <input id="test-name" placeholder="Имя" value="Демо Клиент" style="width: 100%; padding: 4px 8px; background: #1a1a1a; border: 1px solid #333; border-radius: 4px; color: #fff; font-size: 12px; margin-bottom: 4px;">
+        <input id="test-email" placeholder="Email" value="demo@test.ru" style="width: 100%; padding: 4px 8px; background: #1a1a1a; border: 1px solid #333; border-radius: 4px; color: #fff; font-size: 12px; margin-bottom: 4px;">
+        <input id="test-tariff" placeholder="Тариф" value="Базовый" style="width: 100%; padding: 4px 8px; background: #1a1a1a; border: 1px solid #333; border-radius: 4px; color: #fff; font-size: 12px; margin-bottom: 4px;">
+        <input id="test-msg" placeholder="Сообщение" value="Тестовая заявка" style="width: 100%; padding: 4px 8px; background: #1a1a1a; border: 1px solid #333; border-radius: 4px; color: #fff; font-size: 12px;">
+    </div>
+
+    <!-- Кнопки -->
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;">
+        <button onclick="testPing()" style="background: #1e90ff; border: none; color: white; padding: 5px 14px; border-radius: 6px; cursor: pointer; font-size: 12px;">Ping</button>
+        <button onclick="testApplication()" style="background: #32cd32; border: none; color: white; padding: 5px 14px; border-radius: 6px; cursor: pointer; font-size: 12px;">Отправить</button>
+        <button onclick="clearLog()" style="background: #555; border: none; color: white; padding: 5px 14px; border-radius: 6px; cursor: pointer; font-size: 12px;">Очистить</button>
+    </div>
+
+    <!-- Лог с отображением данных -->
+    <div id="api-log" style="background: #0d0d0d; padding: 10px; border-radius: 8px; max-height: 180px; overflow-y: auto; font-size: 12px; color: #0f0; white-space: pre-wrap; word-break: break-all; border: 1px solid #222; line-height: 1.5;">
+        Готов к проверке.
+    </div>
+</div>
+
+<script>
+    // Адреса твоего бэкенда (замени на свои)
+    const API_URL = 'https://fortis-dev.onrender.com/api/applications';
+    const PING_URL = 'https://fortis-dev.onrender.com/ping';
+
+    function log(msg, color = '#0f0') {
+        const el = document.getElementById('api-log');
+        const line = document.createElement('div');
+        line.style.color = color;
+        line.textContent = '> ' + msg;
+        el.appendChild(line);
+        el.scrollTop = el.scrollHeight;
+        document.getElementById('api-status').style.color = color;
+        document.getElementById('api-status').textContent = '● ' + (color === '#0f0' ? 'ok' : (color === '#ffa500' ? 'wait' : 'error'));
+    }
+
+    function clearLog() {
+        document.getElementById('api-log').innerHTML = '';
+        document.getElementById('api-status').textContent = '● idle';
+        document.getElementById('api-status').style.color = '#888';
+    }
+
+    async function testPing() {
+        log('Pinging...', '#ffa500');
+        try {
+            const res = await fetch(PING_URL);
+            const data = await res.json();
+            log('✅ Ответ: ' + JSON.stringify(data), '#0f0');
+        } catch (e) {
+            log('❌ Ошибка: ' + e.message, '#f00');
+        }
+    }
+
+    async function testApplication() {
+        // Собираем данные из полей ввода
+        const name = document.getElementById('test-name').value.trim() || 'Без имени';
+        const email = document.getElementById('test-email').value.trim() || 'без@email.xyz';
+        const tariff = document.getElementById('test-tariff').value.trim() || 'Не выбран';
+        const message = document.getElementById('test-msg').value.trim() || '';
+
+        const payload = { name, email, tariff, message };
+
+        // Показываем, что отправляем
+        log('📤 Отправка: ' + JSON.stringify(payload, null, 2), '#ffa500');
+
+        try {
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                log('✅ Успех! Сервер вернул: ' + JSON.stringify(data, null, 2), '#0f0');
+                // Дополнительно показываем, что данные сохранились
+                if (data._id) {
+                    log('🔑 ID заявки: ' + data._id, '#0ff');
+                }
+            } else {
+                log('❌ Ошибка сервера (код ' + res.status + '): ' + JSON.stringify(data, null, 2), '#f00');
+            }
+        } catch (e) {
+            log('❌ Сетевая ошибка: ' + e.message, '#f00');
+        }
+    }
+</script>
+<!-- ============================================================== -->
 </body>
 </html>
