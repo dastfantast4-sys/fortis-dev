@@ -1535,8 +1535,8 @@
                                 <input type="text" id="overlay-name" placeholder="Ваше имя" style="padding:16px 20px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#fff;font-size:1rem;outline:none;font-family:inherit;width:100%;">
                                 <input type="email" id="overlay-email" placeholder="Ваш email" style="padding:16px 20px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#fff;font-size:1rem;outline:none;font-family:inherit;width:100%;">
                                 <select id="overlay-tariff" style="padding:16px 20px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#fff;font-size:1rem;outline:none;font-family:inherit;width:100%;">
-                                    <option value="base">Базовый</option>
-                                    <option value="standard" selected>Стандарт</option>
+                                    <option value="base">Base</option>
+                                    <option value="standard" selected>Standard</option>
                                     <option value="vip">VIP</option>
                                 </select>
                                 <button id="submit-application" class="btn btn-lg" style="width:100%;justify-content:center;">Отправить заявку</button>
@@ -1858,12 +1858,12 @@
         <div style="margin-bottom: 10px;">
             <input id="test-name" placeholder="Имя" value="Демо Клиент" style="width: 100%; padding: 4px 8px; background: #1a1a1a; border: 1px solid #333; border-radius: 4px; color: #fff; font-size: 12px; margin-bottom: 4px;">
             <input id="test-email" placeholder="Email" value="demo@test.ru" style="width: 100%; padding: 4px 8px; background: #1a1a1a; border: 1px solid #333; border-radius: 4px; color: #fff; font-size: 12px; margin-bottom: 4px;">
-            <!-- Исправленный выпадающий список для тарифа -->
+            <!-- Теперь выпадающий список с английскими названиями -->
             <select id="test-tariff" style="width: 100%; padding: 4px 8px; background: #1a1a1a; border: 1px solid #333; border-radius: 4px; color: #fff; font-size: 12px; margin-bottom: 4px;">
-                <option value="base">Базовый</option>
-                <option value="standard">Стандарт</option>
+                <option value="base">Base</option>
+                <option value="standard">Standard</option>
                 <option value="vip">VIP</option>
-                <option value="not-specified">Не выбран</option>
+                <option value="not-specified">Not specified</option>
             </select>
             <input id="test-msg" placeholder="Сообщение" value="Тестовая заявка" style="width: 100%; padding: 4px 8px; background: #1a1a1a; border: 1px solid #333; border-radius: 4px; color: #fff; font-size: 12px;">
         </div>
@@ -1918,7 +1918,7 @@
             // Собираем данные из полей ввода
             const name = document.getElementById('test-name').value.trim() || 'Без имени';
             const email = document.getElementById('test-email').value.trim() || 'без@email.xyz';
-            const tariff = document.getElementById('test-tariff').value; // теперь это select, возвращает правильное значение
+            const tariff = document.getElementById('test-tariff').value; // select с английскими значениями
             const message = document.getElementById('test-msg').value.trim() || '';
 
             const payload = { name, email, tariff, message };
