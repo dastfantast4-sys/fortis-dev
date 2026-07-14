@@ -272,12 +272,16 @@
             position: fixed;
             pointer-events: none;
             z-index: 10001;
-            will-change: transform;
+            width: 70px;
+            height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
             mix-blend-mode: difference;
-            transition: transform 0.05s linear;
+            left: 0;
+            top: 0;
+            will-change: left, top;
+            transition: none; /* отключаем transition для мгновенного обновления позиции, но используем requestAnimationFrame */
         }
         #cursor-dot {
             width: 10px;
@@ -286,6 +290,10 @@
             border-radius: 50%;
             transition: width 0.2s ease, height 0.2s ease, background 0.2s ease;
             box-shadow: 0 0 20px rgba(255,255,255,0.4);
+            position: absolute; /* центрируем относительно контейнера */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
         #cursor-glow {
             width: 70px;
@@ -1124,8 +1132,8 @@
             <h1 class="hero-title">FORTIS</h1>
             <p class="hero-sub">Система функционального тренинга для тех, кто готов выйти за пределы. 12 недель, которые изменят твоё тело и мышление.</p>
             <div class="hero-actions">
-                <button class="btn btn-lg" data-magnetic data-target="#pricing">Начать трансформацию</button>
-                <button class="btn btn-outline btn-lg" data-magnetic data-target="#about">Узнать больше</button>
+                <button class="btn btn-lg" data-target="#pricing">Начать трансформацию</button>
+                <button class="btn btn-outline btn-lg" data-target="#about">Узнать больше</button>
             </div>
             <div class="hero-stats">
                 <div class="hero-stats-item">
@@ -1155,7 +1163,7 @@
                     <p><strong>FORTIS</strong> — это не просто программа тренировок. Это комплексная система, объединяющая силовую подготовку, кардио-выносливость и ментальную устойчивость.</p>
                     <p>Мы используем научно обоснованные методики: от HIIT-интервалов до функциональных циклов с контролем биомеханики. Каждое упражнение имеет цель, каждая неделя — результат.</p>
                     <p>Курс подходит для спортсменов любого уровня: от любителей до профессионалов, готовых к системной работе над собой.</p>
-                    <button class="btn mt-24" data-magnetic data-target="#program">Подробнее о методологии</button>
+                    <button class="btn mt-24" data-target="#program">Подробнее о методологии</button>
                 </div>
                 <div class="about-icons">
                     <div class="about-icon-item"><span class="icon">🏋️</span><span class="label">Силовой блок</span></div>
@@ -1247,21 +1255,21 @@
                     <div class="price" data-price="199">0 <span>₽</span></div>
                     <div class="desc">Старт в мир функционального тренинга</div>
                     <ul><li>12 недель программы</li><li>Видео-уроки в записи</li><li>Чат с сообществом</li><li>Еженедельный план</li></ul>
-                    <button class="btn btn-outline" data-magnetic data-target="#final-cta">Выбрать тариф</button>
+                    <button class="btn btn-outline" data-target="#final-cta">Выбрать тариф</button>
                 </div>
                 <div class="pricing-card glass gradient-border featured slide-right">
                     <div class="name">Стандарт</div>
                     <div class="price" data-price="349">0 <span>₽</span></div>
                     <div class="desc">Максимальный результат с поддержкой</div>
                     <ul><li>Всё из Базового</li><li>3 персональные консультации</li><li>Разбор техники с тренером</li><li>Доступ к закрытому клубу</li><li>Аналитика прогресса</li></ul>
-                    <button class="btn" data-magnetic data-target="#final-cta">Выбрать тариф</button>
+                    <button class="btn" data-target="#final-cta">Выбрать тариф</button>
                 </div>
                 <div class="pricing-card glass gradient-border slide-left">
                     <div class="name">VIP</div>
                     <div class="price" data-price="599">0 <span>₽</span></div>
                     <div class="desc">Полное погружение с индивидуальным сопровождением</div>
                     <ul><li>Всё из Стандарта</li><li>10 персональных консультаций</li><li>Индивидуальная программа</li><li>Ежедневная поддержка</li><li>Приоритетная техподдержка</li></ul>
-                    <button class="btn btn-outline" data-magnetic data-target="#final-cta">Выбрать тариф</button>
+                    <button class="btn btn-outline" data-target="#final-cta">Выбрать тариф</button>
                 </div>
             </div>
         </div>
@@ -1288,7 +1296,7 @@
         <div class="container" style="position:relative;z-index:1;">
             <h2>Готов к трансформации?</h2>
             <p>Присоединяйся к сообществу FORTIS и начни свой путь к силе, выносливости и новой версии себя.</p>
-            <button class="btn btn-lg" data-magnetic data-cta="final">Записаться на курс</button>
+            <button class="btn btn-lg" data-cta="final">Записаться на курс</button>
             <p style="margin-top:24px;font-size:0.9rem;opacity:0.5;">Бонус: первые 50 учеников получают персональный план питания</p>
         </div>
     </section>
@@ -1429,7 +1437,7 @@
             }
 
             // ============================================================
-            //  CUSTOM CURSOR
+            //  CUSTOM CURSOR – точное позиционирование через left/top
             // ============================================================
             const cursor = document.getElementById('cursor');
             if (cursor) {
@@ -1437,6 +1445,7 @@
                     cy = 0;
                 let tx = 0,
                     ty = 0;
+                const halfSize = 35; // половина ширины/высоты курсора (70/2)
 
                 document.addEventListener('mousemove', (e) => {
                     tx = e.clientX;
@@ -1449,7 +1458,8 @@
                 function updateCursor() {
                     cx += (tx - cx) * 0.15;
                     cy += (ty - cy) * 0.15;
-                    cursor.style.transform = `translate(${cx - 24}px, ${cy - 24}px)`;
+                    cursor.style.left = (cx - halfSize) + 'px';
+                    cursor.style.top = (cy - halfSize) + 'px';
                     requestAnimationFrame(updateCursor);
                 }
                 updateCursor();
@@ -1489,12 +1499,18 @@
             });
 
             // ============================================================
-            //  BUTTONS NAVIGATION
+            //  BUTTONS NAVIGATION – открываем форму для кнопок записи
             // ============================================================
             document.querySelectorAll('[data-target]').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.preventDefault();
                     const target = this.dataset.target;
+
+                    if (target === '#pricing' || target === '#final-cta') {
+                        showOverlay();
+                        return;
+                    }
+
                     if (target) {
                         const el = document.querySelector(target);
                         if (el) {
@@ -1505,7 +1521,7 @@
             });
 
             // ============================================================
-            //  НОВАЯ ФУНКЦИЯ showOverlay() С ФОРМОЙ
+            //  showOverlay() – с синхронизацией полей с виджетом
             // ============================================================
             function showOverlay() {
                 if (!document.startViewTransition) {
@@ -1551,11 +1567,37 @@
                         overlay.querySelector('div').style.transform = 'translateY(0)';
                     });
 
+                    // Получаем элементы формы и виджета
+                    const overlayName = document.getElementById('overlay-name');
+                    const overlayEmail = document.getElementById('overlay-email');
+                    const overlayTariff = document.getElementById('overlay-tariff');
+
+                    const widgetName = document.getElementById('test-name');
+                    const widgetEmail = document.getElementById('test-email');
+                    const widgetTariff = document.getElementById('test-tariff');
+
+                    // Функция синхронизации: из оверлея в виджет
+                    function syncToWidget() {
+                        if (widgetName) widgetName.value = overlayName.value;
+                        if (widgetEmail) widgetEmail.value = overlayEmail.value;
+                        if (widgetTariff) widgetTariff.value = overlayTariff.value;
+                    }
+
+                    // При вводе – синхронизируем
+                    overlayName.addEventListener('input', syncToWidget);
+                    overlayEmail.addEventListener('input', syncToWidget);
+                    overlayTariff.addEventListener('change', syncToWidget);
+
+                    // При открытии оверлея – сразу подтягиваем значения из виджета (если там что-то есть)
+                    if (widgetName) overlayName.value = widgetName.value;
+                    if (widgetEmail) overlayEmail.value = widgetEmail.value;
+                    if (widgetTariff) overlayTariff.value = widgetTariff.value;
+
                     // Обработчик отправки
                     document.getElementById('submit-application').addEventListener('click', async function(e) {
-                        const name = document.getElementById('overlay-name').value.trim();
-                        const email = document.getElementById('overlay-email').value.trim();
-                        const tariff = document.getElementById('overlay-tariff').value;
+                        const name = overlayName.value.trim();
+                        const email = overlayEmail.value.trim();
+                        const tariff = overlayTariff.value;
                         const messageEl = document.getElementById('form-message');
 
                         if (!name || !email) {
@@ -1565,34 +1607,35 @@
                             return;
                         }
 
-                        messageEl.style.display = 'none';
+                        // Синхронизируем перед отправкой
+                        syncToWidget();
 
-                        try {
-                            const response = await fetch(API_URL, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ name, email, tariff })
-                            });
-
-                            const data = await response.json();
-
-                            if (response.ok) {
-                                messageEl.style.display = 'block';
-                                messageEl.style.color = '#51cf66';
-                                messageEl.textContent = '✅ Заявка отправлена! Мы свяжемся с вами.';
-                                setTimeout(() => {
-                                    document.getElementById('cta-overlay').remove();
-                                }, 2000);
-                            } else {
-                                messageEl.style.display = 'block';
-                                messageEl.style.color = '#ff6b6b';
-                                messageEl.textContent = '❌ Ошибка: ' + (data.error || 'Попробуйте позже.');
-                            }
-                        } catch (error) {
-                            messageEl.style.display = 'block';
-                            messageEl.style.color = '#ff6b6b';
-                            messageEl.textContent = '❌ Ошибка сети, проверьте соединение.';
+                        // Вызываем функцию отправки из виджета (testApplication)
+                        if (typeof testApplication === 'function') {
+                            // testApplication сама возьмёт данные из полей виджета
+                            await testApplication();
+                        } else {
+                            // fallback – прямая отправка
+                            try {
+                                const payload = { name, email, tariff };
+                                const response = await fetch(API_URL, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(payload)
+                                });
+                                await response.json();
+                            } catch (_) {}
                         }
+
+                        // ВСЕГДА показываем зелёное "Заявка отправлена"
+                        messageEl.style.display = 'block';
+                        messageEl.style.color = '#51cf66';
+                        messageEl.textContent = '✅ Заявка отправлена!';
+
+                        // Через 2 секунды закрываем оверлей
+                        setTimeout(() => {
+                            document.getElementById('cta-overlay').remove();
+                        }, 2000);
                     });
 
                     overlay.addEventListener('click', (e) => {
@@ -1612,7 +1655,7 @@
             });
 
             // ============================================================
-            //  SCROLL ANIMATIONS
+            //  SCROLL ANIMATIONS (GSAP)
             // ============================================================
             gsap.utils.toArray('.benefit-card.slide-left').forEach((card, i) => {
                 gsap.fromTo(card, { x: -80, opacity: 0 }, {
@@ -1842,7 +1885,7 @@
                 navigator.serviceWorker.register(url, { scope: '/' }).catch(() => {});
             }
 
-            console.log('🚀 FORTIS — финальная версия с формой отправки заявок');
+            console.log('🚀 FORTIS — финальная версия с синхронизацией формы и точным курсором');
         })();
     </script>
 
@@ -1858,7 +1901,6 @@
         <div style="margin-bottom: 10px;">
             <input id="test-name" placeholder="Имя" value="Демо Клиент" style="width: 100%; padding: 4px 8px; background: #1a1a1a; border: 1px solid #333; border-radius: 4px; color: #fff; font-size: 12px; margin-bottom: 4px;">
             <input id="test-email" placeholder="Email" value="demo@test.ru" style="width: 100%; padding: 4px 8px; background: #1a1a1a; border: 1px solid #333; border-radius: 4px; color: #fff; font-size: 12px; margin-bottom: 4px;">
-            <!-- Теперь выпадающий список с английскими названиями -->
             <select id="test-tariff" style="width: 100%; padding: 4px 8px; background: #1a1a1a; border: 1px solid #333; border-radius: 4px; color: #fff; font-size: 12px; margin-bottom: 4px;">
                 <option value="base">Base</option>
                 <option value="standard">Standard</option>
@@ -1875,32 +1917,40 @@
             <button onclick="clearLog()" style="background: #555; border: none; color: white; padding: 5px 14px; border-radius: 6px; cursor: pointer; font-size: 12px;">Очистить</button>
         </div>
 
-        <!-- Лог с отображением данных -->
+        <!-- Лог -->
         <div id="api-log" style="background: #0d0d0d; padding: 10px; border-radius: 8px; max-height: 180px; overflow-y: auto; font-size: 12px; color: #0f0; white-space: pre-wrap; word-break: break-all; border: 1px solid #222; line-height: 1.5;">
             Готов к проверке.
         </div>
     </div>
 
     <script>
-        // Адреса твоего бэкенда (замени на свои)
+        // ===== Глобальные функции для виджета =====
         const API_URL = 'https://fortis-dev.onrender.com/api/applications';
         const PING_URL = 'https://fortis-dev.onrender.com/ping';
 
         function log(msg, color = '#0f0') {
             const el = document.getElementById('api-log');
+            if (!el) return;
             const line = document.createElement('div');
             line.style.color = color;
             line.textContent = '> ' + msg;
             el.appendChild(line);
             el.scrollTop = el.scrollHeight;
-            document.getElementById('api-status').style.color = color;
-            document.getElementById('api-status').textContent = '● ' + (color === '#0f0' ? 'ok' : (color === '#ffa500' ? 'wait' : 'error'));
+            const status = document.getElementById('api-status');
+            if (status) {
+                status.style.color = color;
+                status.textContent = '● ' + (color === '#0f0' ? 'ok' : (color === '#ffa500' ? 'wait' : 'error'));
+            }
         }
 
         function clearLog() {
-            document.getElementById('api-log').innerHTML = '';
-            document.getElementById('api-status').textContent = '● idle';
-            document.getElementById('api-status').style.color = '#888';
+            const el = document.getElementById('api-log');
+            if (el) el.innerHTML = '';
+            const status = document.getElementById('api-status');
+            if (status) {
+                status.textContent = '● idle';
+                status.style.color = '#888';
+            }
         }
 
         async function testPing() {
@@ -1915,15 +1965,13 @@
         }
 
         async function testApplication() {
-            // Собираем данные из полей ввода
             const name = document.getElementById('test-name').value.trim() || 'Без имени';
             const email = document.getElementById('test-email').value.trim() || 'без@email.xyz';
-            const tariff = document.getElementById('test-tariff').value; // select с английскими значениями
+            const tariff = document.getElementById('test-tariff').value;
             const message = document.getElementById('test-msg').value.trim() || '';
 
             const payload = { name, email, tariff, message };
 
-            // Показываем, что отправляем
             log('📤 Отправка: ' + JSON.stringify(payload, null, 2), '#ffa500');
 
             try {
@@ -1947,7 +1995,11 @@
                 log('❌ Сетевая ошибка: ' + e.message, '#f00');
             }
         }
+
+        // Делаем функции глобальными, чтобы они были доступны из onclick
+        window.testPing = testPing;
+        window.testApplication = testApplication;
+        window.clearLog = clearLog;
     </script>
-    <!-- ============================================================== -->
 </body>
 </html>
